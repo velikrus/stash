@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - DOMAIN-KEYWORD,ytimg,LV 2,no-track
   - DOMAIN-KEYWORD,ggpht,LV 2,no-track
   - DOMAIN-KEYWORD,googlevideo,LV 2,no-track
   - DOMAIN-KEYWORD,binance,LV 2,no-track
