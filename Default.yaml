@@ -16,9 +16,10 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - DOMAIN-KEYWORD,youtube,LV 2,no-track
   - DOMAIN-KEYWORD,canva,LV 2,no-track
   - DOMAIN-KEYWORD,git,LV 2,no-track
-  - DOMAIN-KEYWORD,whoer.net,LV 2,no-track
+  - DOMAIN-KEYWORD,whoer.net,LV 2
   - DOMAIN-KEYWORD,fb.com,LV 2,no-track
   - DOMAIN-KEYWORD,facebook,LV 2,no-track
   - DOMAIN-KEYWORD,instagram,LV 2,no-track
