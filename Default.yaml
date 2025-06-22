@@ -16,6 +16,8 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - DOMAIN-KEYWORD,binance,LV 2,no-track
+  - PROCESS-NAME,ig.com,LV 2,no-track
   - DOMAIN-KEYWORD,canva,LV 2,no-track
   - DOMAIN-KEYWORD,git,LV 2,no-track
   - DOMAIN-KEYWORD,whoer.net,LV 2,no-track
