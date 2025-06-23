@@ -1,41 +1,42 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+###############################################################################
+#  auto_commit.sh — debug edition
+#  Лог:  auto_commit_dbg.log  (в корне репо и на экране)
+###############################################################################
+set -euo pipefail          # падаем на любой ошибке
+exec > >(tee -a auto_commit_dbg.log) 2>&1
+set -x                     # выводим каждую команду
 
-LOG=".git/auto_commit.log"           # лог невидим для Git
-exec >>"$LOG" 2>&1
-echo "----- $(date '+%F %T') START -----"
+echo "==== $(date '+%F %T') START ===="
 
 FILES=(auto_commit.sh update_from_github.sh Default.yaml)
 
-git fetch origin main
+# 0. Убираем из-под контроля всё лишнее (на случай, если кто-то снова добавил)
+git rm --cached --ignore-unmatch auto_commit.log || true
 
-# Проверяем изменения ТОЛЬКО в whitelisted-файлах
-CHANGED=false
+# 1. Проверяем, есть ли изменения в whitelisted-файлах
+git fetch origin main
+NEED_PUSH=false
 for f in "${FILES[@]}"; do
   if ! git diff --quiet origin/main -- "$f"; then
-    CHANGED=true; break
+    NEED_PUSH=true; break
   fi
 done
+"$NEED_PUSH" || { echo "нет изменений — выход"; echo "==== END ===="; exit 0; }
 
-if [ "$CHANGED" = false ]; then
-  echo "Нет изменений — выход"
-  exit 0
+# 2. Коммитим локальные «висяки», если есть
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  git add -A
+  git commit -m "🛠 локальный автокоммит"
 fi
 
-# Коммит-сообщение: имя первого изменённого файла
-for f in "${FILES[@]}"; do
-  if ! git diff --quiet origin/main -- "$f"; then
-    COMMIT_MSG="update $f"; break
-  fi
-done
+# 3. Подтягиваем origin/main через merge
+git pull origin main --no-edit
 
-# Обновляем локальную ветку со stash-автообъединением
-git pull --rebase --autostash origin main        || { echo "pull failed"; exit 1; }
-
-# Добавляем и пушим только whitelisted-файлы
+# 4. Итоговый коммит и push
+MSG="auto-update: $(date '+%H:%M:%S')"
 git add "${FILES[@]}"
-git commit -m "$COMMIT_MSG"
-git push origin main                             || { echo "push failed"; exit 1; }
+git commit -m "$MSG" || echo "skip commit (diff пуст)"
+git push origin main
 
-echo "✅ Пуш завершён: $COMMIT_MSG"
-echo "----- $(date '+%F %T') END -----"
+echo "==== $(date '+%F %T') END ===="
