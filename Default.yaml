@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - PROCESS-NAME,google,LV 2,no-track
   - PROCESS-NAME,new3,LV 2,no-track
   - PROCESS-NAME,new2,LV 2,no-track
   - PROCESS-NAME,new,LV 2,no-track

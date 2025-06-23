@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 ###############################################################################
-#  auto_commit.sh  —  PROD
-#  · лог: auto_commit.log (свежие блоки сверху, хранится 10 последних)
-#  · отслеживает: auto_commit.sh, update_from_github.sh, Default.yaml
-#  · commit-msg: «add monolead» · «remove AdsPower Global» · «update Default.yaml»
+#  auto_commit.sh — PROD
+#  • лог: auto_commit.log (в корне репо, свежие блоки сверху, не более 10)
+#  • отслеживаются только: auto_commit.sh, update_from_github.sh, Default.yaml
+#  • commit-msg: «add monolead» / «remove AdsPower Global» и т.д.
 ###############################################################################
-
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -13,70 +12,79 @@ FILES=(auto_commit.sh update_from_github.sh Default.yaml)
 LOG="auto_commit.log"
 TMP_LOG="$(mktemp)"
 
-##############################################################################
-#  Ф-ция prepend-лога (всегда вызывается через trap)
-##############################################################################
-goto_log() {
-  { cat "$TMP_LOG"; echo; [[ -f $LOG ]] && cat "$LOG"; } > "${LOG}.new"
+log() { echo "$1" | tee -a "$TMP_LOG"; }
 
-  # оставляем 10 последних блоков «==== … START ===="
-  awk '
-    /^==== .* START ====/ {blk++}
-    {buf[blk] = buf[blk] $0 ORS}
-    END {for (i = blk; i > blk-10 && i > 0; i--) printf "%s", buf[i]}
-  ' "${LOG}.new" > "$LOG"
+log "==== $(date '+%F %T') START ===="
 
-  rm -f "$TMP_LOG" "${LOG}.new"
-}
-trap goto_log EXIT   # лог пишется даже при ошибке / exit
-
-##############################################################################
-echo "==== $(date '+%F %T') START ====" | tee  "$TMP_LOG"
-
-# 0. лог не должен трекаться
+# Убираем лог из индекса на всякий случай
 git rm --cached --ignore-unmatch "$LOG" 2>/dev/null || true
 
-# 1. есть ли изменения?
+# Обновляем локальную ветку
 git fetch origin main
+
+# Проверка: есть ли изменения в whitelisted-файлах?
 need_push=false
 for f in "${FILES[@]}"; do
-  if ! git diff --quiet origin/main -- "$f"; then need_push=true; break; fi
+  if ! git diff --quiet origin/main -- "$f"; then
+    need_push=true
+    break
+  fi
 done
-if [[ "$need_push" = false ]]; then
-  echo "нет изменений — выход" | tee -a "$TMP_LOG"
+
+if ! $need_push; then
+  log "нет изменений — выход"
+  goto_log() {
+    {
+      cat "$TMP_LOG"
+      [[ -f $LOG ]] && cat "$LOG"
+    } > "${LOG}.new"
+    awk '/==== .* START ====/ {cnt++} cnt<=10' "${LOG}.new" > "$LOG"
+    rm -f "$TMP_LOG" "${LOG}.new"
+  }
+  goto_log
   exit 0
 fi
 
-# 2. локальные «висяки»
+# Автокоммит незакоммиченных локальных изменений
 if ! git diff --quiet || ! git diff --cached --quiet; then
   git add -A
   git commit -m "🛠 локальный автокоммит" | tee -a "$TMP_LOG"
 fi
 
-# 3. pull (merge)
+# Pull без rebase
 git pull origin main --no-edit | tee -a "$TMP_LOG"
 
-# 4. commit-msg из первой изменённой строки Default.yaml
+# Определяем commit-msg по изменению в Default.yaml
 diff_line=$(git diff origin/main -- Default.yaml \
-            | grep -E '^[-+]\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1 || true)
-case "$diff_line" in
-  +*) MSG="add    $(echo "$diff_line" | cut -d',' -f2 | xargs)";;
-  -*) MSG="remove $(echo "$diff_line" | cut -d',' -f2 | xargs)";;
-   *) MSG="update Default.yaml";;
-esac
+  | grep -E '^[-+]\s*(DOMAIN-KEYWORD|PROCESS-NAME)' \
+  | head -n1)
 
-# 5. финальный коммит + push
+if [[ $diff_line == +* ]]; then
+  action="add"
+  service=$(echo "$diff_line" | cut -d',' -f2)
+elif [[ $diff_line == -* ]]; then
+  action="remove"
+  service=$(echo "$diff_line" | cut -d',' -f2)
+else
+  action="update"
+  service="Default.yaml"
+fi
+MSG="$action $(echo "$service" | sed 's/^[[:space:]]*//')"
+
+# Финальный коммит + push
 git add "${FILES[@]}"
-if ! git diff --cached --quiet; then
-  git commit -m "$MSG" | tee -a "$TMP_LOG"
-else
-  echo "skip commit (diff пуст)" | tee -a "$TMP_LOG"
-fi
+git commit -m "$MSG" | tee -a "$TMP_LOG" || log "skip commit (diff пуст)"
+git push origin main | tee -a "$TMP_LOG"
+log "✅ push complete — $MSG"
+log "==== $(date '+%F %T') END ===="
 
-if git push origin main 2>&1 | tee -a "$TMP_LOG"; then
-  echo "✅ push complete — $MSG" | tee -a "$TMP_LOG"
-else
-  echo "❌ push failed"         | tee -a "$TMP_LOG"
-fi
-
-echo "==== $(date '+%F %T') END ====" | tee -a "$TMP_LOG"
+# Препенд лог: оставляем максимум 10 блоков
+goto_log() {
+  {
+    cat "$TMP_LOG"
+    [[ -f $LOG ]] && cat "$LOG"
+  } > "${LOG}.new"
+  awk '/==== .* START ====/ {cnt++} cnt<=10' "${LOG}.new" > "$LOG"
+  rm -f "$TMP_LOG" "${LOG}.new"
+}
+goto_log
