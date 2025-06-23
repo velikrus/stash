@@ -12,6 +12,18 @@ FILES=(auto_commit.sh update_from_github.sh Default.yaml)
 LOG="auto_commit.log"
 TMP_LOG="$(mktemp)"
 
+##############################################################################
+# Функция prepend-лога (сверху) + обрезка до 10 блоков
+goto_log() {
+  { cat "$TMP_LOG"; [[ -f $LOG ]] && cat "$LOG"; } > "${LOG}.new"
+  awk '
+    BEGIN { cnt = 0 }
+    /^==== .* START ====/ { cnt++ }
+    cnt <= 10
+  ' "${LOG}.new" > "$LOG"
+  rm -f "$TMP_LOG" "${LOG}.new"
+}
+
 log() { echo "$@" | tee -a "$TMP_LOG"; }
 
 log "==== $(date '+%F %T') START ===="
@@ -44,11 +56,11 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 ##############################################################################
-# 3. pull c auto-merge
+# 3. pull без rebase
 git pull origin main --no-edit | tee -a "$TMP_LOG"
 
 ##############################################################################
-# 4. определяем diff-строку для коммита
+# 4. определяем commit-msg
 diff_line=$(git diff origin/main -- Default.yaml | grep -E '^[-+]\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1)
 
 if [[ $diff_line == +* ]]; then
@@ -76,17 +88,5 @@ git push origin main | tee -a "$TMP_LOG"
 
 log "✅ push complete — $MSG"
 log "==== $(date '+%F %T') END ===="
-
-##############################################################################
-# 6. prepend-лог (сверху) + не более 10 блоков
-goto_log() {
-  { cat "$TMP_LOG"; [[ -f $LOG ]] && cat "$LOG"; } > "${LOG}.new"
-  awk '
-    BEGIN { cnt = 0 }
-    /^==== .* START ====/ { cnt++; }
-    cnt <= 10
-  ' "${LOG}.new" > "$LOG"
-  rm -f "$TMP_LOG" "${LOG}.new"
-}
 
 goto_log
