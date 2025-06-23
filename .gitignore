@@ -1,0 +1,6 @@
+*
+!.gitignore
+!auto_commit.sh
+!update_from_github.sh
+!Default.yaml
+auto_commit.log
