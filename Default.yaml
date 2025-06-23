@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - PROCESS-NAME,google2,LV 2,no-track
   - PROCESS-NAME,google,LV 2,no-track
   - PROCESS-NAME,AdsPower Global,LV 2,no-track
   - DOMAIN-KEYWORD,monolead,LV 2,no-track
