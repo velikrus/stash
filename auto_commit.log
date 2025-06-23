@@ -15,3 +15,11 @@ error: please commit or stash them.
 ❌ rebase failed
 ----- 2025-06-23 16:48:39 -----  START
 ⚠️ Обнаружены несохранённые изменения — коммичу
+[main d40d44c] 🛠 Автокоммит несохранённых изменений
+ 5 files changed, 83 insertions(+), 37 deletions(-)
+ create mode 100644 auto_commit.log
+ rewrite auto_commit.sh (75%)
+[pull]
+error: cannot pull with rebase: You have unstaged changes.
+error: please commit or stash them.
+❌ pull/rebase failed

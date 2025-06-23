@@ -1,52 +1,41 @@
 #!/bin/bash
 cd "$(dirname "$0")"
 
-LOG="auto_commit.log"
+LOG=".git/auto_commit.log"           # лог невидим для Git
 exec >>"$LOG" 2>&1
-echo "----- $(date '+%Y-%m-%d %H:%M:%S') -----  START"
+echo "----- $(date '+%F %T') START -----"
 
-FILE="Default.yaml"
+FILES=(auto_commit.sh update_from_github.sh Default.yaml)
 
-# 0. Коммитим незакоммиченные изменения, если они есть
-if ! git diff --quiet; then
-  echo "⚠️ Обнаружены несохранённые изменения — коммичу"
-  git add -A
-  git commit -m "🛠 Автокоммит несохранённых изменений" || echo "❗ Уже закоммичено"
-fi
-
-# 1. Подтягиваем свежую ветку
-echo "[pull]"
-git pull --rebase origin main || {
-  echo "❌ pull/rebase failed"; exit 1;
-}
-
-# 2. Сравниваем yaml-файл с origin/main
 git fetch origin main
-git diff origin/main -- "$FILE" > changes.diff
 
-if ! grep -q '^\+' changes.diff; then
-  echo "Нет изменений в $FILE — выход"
-  rm changes.diff
+# Проверяем изменения ТОЛЬКО в whitelisted-файлах
+CHANGED=false
+for f in "${FILES[@]}"; do
+  if ! git diff --quiet origin/main -- "$f"; then
+    CHANGED=true; break
+  fi
+done
+
+if [ "$CHANGED" = false ]; then
+  echo "Нет изменений — выход"
   exit 0
 fi
 
-# 3. Формируем meaningful commit message
-COMMIT_MSG=$(grep '^+  \?-\s*\(DOMAIN-KEYWORD\|PROCESS-NAME\)' changes.diff \
-              | sed -E 's/.*(DOMAIN-KEYWORD|PROCESS-NAME),([^,]+).*/\2/' \
-              | head -n 1)
-[[ -z "$COMMIT_MSG" ]] && COMMIT_MSG="Auto update"
+# Коммит-сообщение: имя первого изменённого файла
+for f in "${FILES[@]}"; do
+  if ! git diff --quiet origin/main -- "$f"; then
+    COMMIT_MSG="update $f"; break
+  fi
+done
 
-# 4. Коммит и пуш
-echo "[add]";         git add "$FILE"
-echo "[commit] $COMMIT_MSG"
-git commit -m "$COMMIT_MSG" || echo "❗ Commit failed, возможно — без изменений"
+# Обновляем локальную ветку со stash-автообъединением
+git pull --rebase --autostash origin main        || { echo "pull failed"; exit 1; }
 
-echo "[push]"
-git push origin main || {
-  echo "❌ push failed"; exit 1;
-}
+# Добавляем и пушим только whitelisted-файлы
+git add "${FILES[@]}"
+git commit -m "$COMMIT_MSG"
+git push origin main                             || { echo "push failed"; exit 1; }
 
-# Очистка
-rm changes.diff
-echo "✅ Завершено: $COMMIT_MSG"
-echo "----- $(date '+%Y-%m-%d %H:%M:%S') -----  END"
+echo "✅ Пуш завершён: $COMMIT_MSG"
+echo "----- $(date '+%F %T') END -----"
