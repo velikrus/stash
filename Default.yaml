@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - DOMAIN-KEYWORD,cpatoday,LV 2,no-track
   - DOMAIN-KEYWORD,betterdisplay,LV 2,no-track
   - DOMAIN-KEYWORD,nektony,LV 2,no-track
   - DOMAIN-KEYWORD,ytimg,LV 2,no-track
