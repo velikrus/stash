@@ -82,46 +82,62 @@ fi
 # 5. определяем commit-msg на основе изменений
 MSG="update configuration"
 
-# Проверяем изменения в Default.yaml (незакоммиченные или из последних коммитов)
-diff_output=""
-if [[ " ${changed_files[@]} " =~ " Default.yaml " ]]; then
-  # Сначала проверяем незакоммиченные изменения  
-  diff_output=$(git diff HEAD -- Default.yaml 2>/dev/null || git diff --cached -- Default.yaml 2>/dev/null || echo "")
+if [[ " ${changed_files[*]} " =~ " Default.yaml " ]]; then
+  log "Анализируем изменения в Default.yaml..."
   
-  # Если нет незакоммиченных, проверяем последние коммиты
-  if [[ -z "$diff_output" ]]; then
-    diff_output=$(git diff origin/main..HEAD -- Default.yaml 2>/dev/null || echo "")
-  fi
+  # Получаем diff из staged изменений
+  diff_output=$(git diff --cached -- Default.yaml 2>/dev/null || echo "")
   
   if [[ -n "$diff_output" ]]; then
-    # Ищем добавленные сервисы
-    added_line=$(echo "$diff_output" | grep -E '^\+\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1 | sed 's/^\+//')
-    # Ищем удаленные сервисы  
-    removed_line=$(echo "$diff_output" | grep -E '^\-\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1 | sed 's/^\-//')
+    log "Найдены staged изменения, ищем сервисы..."
     
-    if [[ -n "$added_line" ]]; then
-      service=$(echo "$added_line" | cut -d',' -f2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-      MSG="add $service"
-      log "Обнаружено добавление сервиса: $service"
-    elif [[ -n "$removed_line" ]]; then
-      service=$(echo "$removed_line" | cut -d',' -f2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-      MSG="remove $service"
-      log "Обнаружено удаление сервиса: $service"
+    # Упрощенный поиск добавленных строк с DOMAIN-KEYWORD
+    added_service=""
+    removed_service=""
+    
+    # Ищем добавленные строки
+    while IFS= read -r line; do
+      if [[ $line =~ ^\+.*DOMAIN-KEYWORD,([^,]+) ]]; then
+        added_service="${BASH_REMATCH[1]}"
+        break
+      fi
+    done <<< "$diff_output"
+    
+    # Ищем удаленные строки
+    while IFS= read -r line; do
+      if [[ $line =~ ^\-.*DOMAIN-KEYWORD,([^,]+) ]]; then
+        removed_service="${BASH_REMATCH[1]}"
+        break
+      fi
+    done <<< "$diff_output"
+    
+    if [[ -n "$added_service" ]]; then
+      MSG="add $added_service"
+      log "Обнаружено добавление сервиса: $added_service"
+    elif [[ -n "$removed_service" ]]; then
+      MSG="remove $removed_service"
+      log "Обнаружено удаление сервиса: $removed_service"
     else
       MSG="update Default.yaml"
       log "Обнаружены другие изменения в Default.yaml"
     fi
+  else
+    MSG="update Default.yaml"
+    log "Staged diff пустой"
   fi
 else
-  # Если изменения только в скриптах
   MSG="update scripts"
   log "Изменения только в скриптах"
 fi
 
+log "Итоговое сообщение коммита: '$MSG'"
+
 ##############################################################################
-# 6. создаем коммит если есть незакоммиченные изменения
-if [ "$local_changes" = true ]; then
-  log "Создание коммита: $MSG"
+# 6. создаем коммит если есть staged изменения или новые изменения
+if git diff --cached --quiet; then
+  log "Нет staged изменений для коммита"
+else
+  log "Создание коммита: '$MSG'"
   if git commit -m "$MSG" 2>&1 | tee -a "$TMP_LOG"; then
     log "✅ Коммит создан успешно"
   else
