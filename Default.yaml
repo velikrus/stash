@@ -16,7 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
-  - DOMAIN-KEYWORD,test2,LV 2,no-track
+  - DOMAIN-KEYWORD,test,LV 2,no-track
   - DOMAIN-KEYWORD,monolead,LV 2,no-track
   - DOMAIN-KEYWORD,cpatoday,LV 2,no-track
   - DOMAIN-KEYWORD,betterdisplay,LV 2,no-track

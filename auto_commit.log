@@ -1,0 +1,17 @@
+----- 2025-06-23 16:46:47 -----  START
+[pull]
+error: cannot pull with rebase: You have unstaged changes.
+error: please commit or stash them.
+[fetch]
+From https://github.com/velikrus/stash
+ * branch            main       -> FETCH_HEAD
+[add]   Default.yaml
+[commit] test2
+[main 8e55045] test2
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[rebase]
+error: cannot pull with rebase: You have unstaged changes.
+error: please commit or stash them.
+❌ rebase failed
+----- 2025-06-23 16:48:39 -----  START
+⚠️ Обнаружены несохранённые изменения — коммичу
