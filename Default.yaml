@@ -6,6 +6,7 @@ proxy-providers:
   # 服务提供商-2:
   #   url: http://your-another-service-provider
   #   interval: 600
+
 proxy-groups:
   # 功能分组
   - name: 选择代理
@@ -19,32 +20,39 @@ proxy-groups:
       - JP 日本
       - US 美国
       - DIRECT
+
   - name: Netflix
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Netflix.png
     type: select
     proxies: *proxies
+
   - name: Disney+
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Disney%2B.png
     type: select
     proxies: *proxies
+
   - name: Spotify
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Spotify.png
     type: select
     proxies: *proxies
+
   - name: YouTube
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/YouTube.png
     type: select
     proxies: *proxies
+
   - name: Speedtest
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Speedtest.png
     type: select
     proxies: *proxies
+
   - name: 默认
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Final.png
     type: select
     proxies:
       - 选择代理
       - DIRECT
+
   # 基于地区分组
   - name: HK 香港
     filter: "港|🇭🇰|HK|(?i)Hong"
@@ -55,6 +63,7 @@ proxy-groups:
     type: url-test
     url: http://cp.cloudflare.com/generate_204
     include-all: true
+
   - name: TW 台湾
     filter: "台|🇨🇳|🇹🇼|湾|TW|(?i)Taiwan"
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Taiwan.png
@@ -64,6 +73,7 @@ proxy-groups:
     type: url-test
     url: http://cp.cloudflare.com/generate_204
     include-all: true
+
   - name: SG 新加坡
     filter: "新加坡|坡|狮城|🇸🇬|SG|(?i)Singapore"
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Singapore.png
@@ -73,6 +83,7 @@ proxy-groups:
     type: url-test
     url: http://cp.cloudflare.com/generate_204
     include-all: true
+
   - name: JP 日本
     filter: "日|🇯🇵|东京|JP|(?i)Japan"
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Japan.png
@@ -82,6 +93,7 @@ proxy-groups:
     type: url-test
     url: http://cp.cloudflare.com/generate_204
     include-all: true
+
   - name: US 美国
     filter: "美|🇺🇲|US|(?i)States|American"
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/United_States.png
@@ -91,6 +103,7 @@ proxy-groups:
     type: url-test
     url: http://cp.cloudflare.com/generate_204
     include-all: true
+
   - name: 自动选择
     icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Proxy.png
     interval: 120
@@ -99,66 +112,79 @@ proxy-groups:
     type: url-test
     url: http://cp.cloudflare.com/generate_204
     include-all: true
+
 rules:
-  - PROCESS-PATH,test2,LV 2,no-track
-  - DOMAIN-KEYWORD,test,LV 2,no-track
-  - PROCESS-NAME,AdsPower Global,LV 2,no-track
-  - DOMAIN-KEYWORD,monolead,LV 2,no-track
-  - DOMAIN-KEYWORD,cpatoday,LV 2,no-track
-  - DOMAIN-KEYWORD,betterdisplay,LV 2,no-track
-  - DOMAIN-KEYWORD,nektony,LV 2,no-track
-  - DOMAIN-KEYWORD,ytimg,LV 2,no-track
-  - DOMAIN-KEYWORD,ggpht,LV 2,no-track
-  - DOMAIN-KEYWORD,googlevideo,LV 2,no-track
-  - DOMAIN-KEYWORD,binance,LV 2,no-track
-  - PROCESS-NAME,ig.com,LV 2,no-track
-  - DOMAIN-KEYWORD,canva,LV 2,no-track
-  - DOMAIN-KEYWORD,git,LV 2,no-track
-  - DOMAIN-KEYWORD,whoer.net,LV 2,no-track
-  - DOMAIN-KEYWORD,fb.com,LV 2,no-track
-  - DOMAIN-KEYWORD,facebook,LV 2,no-track
-  - DOMAIN-KEYWORD,instagram,LV 2,no-track
-  - DOMAIN-KEYWORD,stripe,LV 2,no-track
-  - DOMAIN-KEYWORD,smshub,LV 2,no-track
-  - DOMAIN-KEYWORD,x10,LV 2,no-track
-  - PROCESS-NAME,AdsPower Global Helper,LV 2,no-track
-  - PROCESS-NAME,AdsPowerToolMerge,LV 2,no-track
-  - DOMAIN-KEYWORD,devmate.com,LV 2,no-track
-  - PROCESS-NAME,tor,LV 2,no-track
-  - PROCESS-NAME,Notion Helper,LV 2,no-track
-  - DOMAIN-KEYWORD,notion,LV 2,no-track
-  - PROCESS-NAME,Notion,LV 2,no-track
-  - PROCESS-NAME,Pachca,DIRECT,no-track
-  - PROCESS-NAME,Pachca Helper,DIRECT,no-track
-  - PROCESS-NAME,ChatGPTHelper,LV 2,no-track
-  - PROCESS-NAME,com.kaspersky.kav,DIRECT,no-track
-  - PROCESS-NAME,Asana Helper,LV 2,no-track
-  - PROCESS-NAME,PuntoSwitcher,DIRECT,no-track
-  - PROCESS-NAME,kaspersky,DIRECT,no-track
-  - DOMAIN-KEYWORD,browserleaks,LV 2,no-track
-  - DOMAIN-KEYWORD,icloud.com,DIRECT,no-track
-  - DOMAIN-KEYWORD,apple.com,DIRECT,no-track
-  - DOMAIN-KEYWORD,1password,DIRECT,no-track
-  - PROCESS-NAME,kavd,DIRECT,no-track
-  - DOMAIN-KEYWORD,kaspersky,DIRECT,no-track
-  - DOMAIN-KEYWORD,youtube,LV 2,no-track
-  - DOMAIN-KEYWORD,proton,LV 2,no-track
-  - DOMAIN-KEYWORD,confluence,LV 2,no-track
-  - DOMAIN-KEYWORD,jira,LV 2,no-track
-  - DOMAIN-KEYWORD,atlassian,LV 2,no-track
-  - DOMAIN-KEYWORD,airtable,LV 2,no-track
-  - PROCESS-NAME,asana,LV 2,no-track
-  - DOMAIN-KEYWORD,asana,LV 2,no-track
-  - PROCESS-NAME,chatgpt,LV 2,no-track
-  - DOMAIN-KEYWORD,chatgpt,LV 2,no-track
-  - DOMAIN-KEYWORD,whoer.net,LV 2,no-track
-  - DOMAIN-KEYWORD,sentry.io,LV 2,no-track
-  - DOMAIN-KEYWORD,openai,LV 2,no-track
-  - DOMAIN-KEYWORD,2ip,LV 2,no-track
-  - DOMAIN-KEYWORD,deepl,LV 2,no-track
+  - SCRIPT,quic,REJECT
+
+  # Netflix
+  - RULE-SET,netflix,Netflix
+  # Disney+
+  - RULE-SET,disney,Disney+
+  # Spotify
+  - RULE-SET,spotify,Spotify
+  # Speedtest
+  - RULE-SET,speedtest,Speedtest
+  # GitHub
+  - RULE-SET,github,选择代理
+  # Telegram
+  - IP-ASN,62014,选择代理,no-resolve
+  - IP-ASN,59930,选择代理,no-resolve
+  - IP-ASN,44907,选择代理,no-resolve
+  - IP-ASN,211157,选择代理,no-resolve
+  - PROCESS-NAME,Telegram.exe,选择代理
+  - PROCESS-NAME,Telegram,选择代理
+  - RULE-SET,telegram,选择代理
+  # YouTube
+  - RULE-SET,youtube,YouTube
+  # Google
+  - RULE-SET,google,选择代理
+  # Twitter
+  - RULE-SET,twitter,选择代理
+  - DOMAIN-SUFFIX,tapbots.com,选择代理
+  # Instagram
+  - RULE-SET,instagram,选择代理
+  # Facebook
+  - RULE-SET,facebook,选择代理
+  # Steam
+  - RULE-SET,steam@cn,DIRECT
+  - RULE-SET,steam,选择代理
+  # Apple LBS
+  - DOMAIN-SUFFIX,iphone-ld.apple.com,DIRECT
+  - DOMAIN-SUFFIX,lcdn-locator.apple.com,DIRECT
+  - DOMAIN-SUFFIX,lcdn-registration.apple.com,DIRECT
+  - DOMAIN-SUFFIX,push.apple.com,DIRECT
+  # Apple OCSP
+  - PROCESS-NAME,trustd,选择代理
+  # Microsoft
+  - RULE-SET,microsoft@cn,DIRECT
+  - RULE-SET,microsoft,选择代理
+  - RULE-SET,xbox,选择代理
+  # common proxy utils
+  - PROCESS-NAME,v2ray,DIRECT
+  - PROCESS-NAME,Surge,DIRECT
+  - PROCESS-NAME,ss-local,DIRECT
+  - PROCESS-NAME,privoxy,DIRECT
+  - PROCESS-NAME,trojan,DIRECT
+  - PROCESS-NAME,trojan-go,DIRECT
+  - PROCESS-NAME,naive,DIRECT
+  - PROCESS-NAME,CloudflareWARP,DIRECT
+  - PROCESS-NAME,Cloudflare WARP,DIRECT
+  - IP-CIDR,162.159.193.0/24,DIRECT,no-resolve
+  - PROCESS-NAME,p4pclient,DIRECT
+  - PROCESS-NAME,Thunder,DIRECT
+  - PROCESS-NAME,DownloadService,DIRECT
+  - PROCESS-NAME,qbittorrent,DIRECT
+  - PROCESS-NAME,Transmission,DIRECT
+  - PROCESS-NAME,fdm,DIRECT
+  - PROCESS-NAME,aria2c,DIRECT
+  - PROCESS-NAME,Folx,DIRECT
+  - PROCESS-NAME,NetTransport,DIRECT
+  - PROCESS-NAME,uTorrent,DIRECT
+  - PROCESS-NAME,WebTorrent,DIRECT
+
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
-  - MATCH,Default
+  - MATCH,默认
 script:
   shortcuts:
     quic: network == 'udp' and dst_port == 443
@@ -173,6 +199,7 @@ dns:
     - https://doh.pub/dns-query
 log-level: info
 mode: rule
+
 rule-providers:
   netflix:
     behavior: domain
