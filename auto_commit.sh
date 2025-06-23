@@ -1,42 +1,77 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###############################################################################
-#  auto_commit.sh — debug edition
-#  Лог:  auto_commit_dbg.log  (в корне репо и на экране)
+#  auto_commit.sh — PROD
+#  • лог: auto_commit.log (в корне репо, свежие блоки сверху, не более 10)
+#  • отслеживаются только: auto_commit.sh, update_from_github.sh, Default.yaml
+#  • commit-msg: «add monolead» / «remove AdsPower Global» и т.д.
 ###############################################################################
-set -euo pipefail          # падаем на любой ошибке
-exec > >(tee -a auto_commit_dbg.log) 2>&1
-set -x                     # выводим каждую команду
-
-echo "==== $(date '+%F %T') START ===="
+set -euo pipefail
+cd "$(dirname "$0")"
 
 FILES=(auto_commit.sh update_from_github.sh Default.yaml)
+LOG="auto_commit.log"
+TMP_LOG="$(mktemp)"
 
-# 0. Убираем из-под контроля всё лишнее (на случай, если кто-то снова добавил)
-git rm --cached --ignore-unmatch auto_commit.log || true
+echo "==== $(date '+%F %T') START ===="  | tee  "$TMP_LOG"
 
-# 1. Проверяем, есть ли изменения в whitelisted-файлах
+##############################################################################
+# 0. убираем auto_commit.log из индекса (на всякий пожарный)
+git rm --cached --ignore-unmatch auto_commit.log 2>/dev/null || true
+
+##############################################################################
+# 1. есть ли изменения в whitelisted-файлах?
 git fetch origin main
-NEED_PUSH=false
+need_push=false
 for f in "${FILES[@]}"; do
   if ! git diff --quiet origin/main -- "$f"; then
-    NEED_PUSH=true; break
+    need_push=true; break
   fi
 done
-"$NEED_PUSH" || { echo "нет изменений — выход"; echo "==== END ===="; exit 0; }
+$need_push || { echo "нет изменений — выход" | tee -a "$TMP_LOG"; goto_log; exit 0; }
 
-# 2. Коммитим локальные «висяки», если есть
+##############################################################################
+# 2. автокоммит локальных «висяков», если есть
 if ! git diff --quiet || ! git diff --cached --quiet; then
   git add -A
-  git commit -m "🛠 локальный автокоммит"
+  git commit -m "🛠 локальный автокоммит" | tee -a "$TMP_LOG"
 fi
 
-# 3. Подтягиваем origin/main через merge
-git pull origin main --no-edit
+##############################################################################
+# 3. pull (merge — без rebase)
+git pull origin main --no-edit | tee -a "$TMP_LOG"
 
-# 4. Итоговый коммит и push
-MSG="auto-update: $(date '+%H:%M:%S')"
+##############################################################################
+# 4. определяем первое изменение для commit-msg
+diff_line=$(git diff origin/main -- Default.yaml \
+            | grep -E '^[-+]\s*(DOMAIN-KEYWORD|PROCESS-NAME)' \
+            | head -n1)
+
+if [[ $diff_line == +* ]]; then
+  action="add"
+  service=$(echo "$diff_line" | cut -d',' -f2)
+elif [[ $diff_line == -* ]]; then
+  action="remove"
+  service=$(echo "$diff_line" | cut -d',' -f2)
+else
+  action="update"
+  service="Default.yaml"
+fi
+MSG="$action $(echo "$service" | sed 's/^[[:space:]]*//')"
+
+##############################################################################
+# 5. финальный коммит + push
 git add "${FILES[@]}"
-git commit -m "$MSG" || echo "skip commit (diff пуст)"
-git push origin main
+git commit -m "$MSG" | tee -a "$TMP_LOG" || echo "skip commit (diff пуст)" | tee -a "$TMP_LOG"
+git push origin main    | tee -a "$TMP_LOG"
 
-echo "==== $(date '+%F %T') END ===="
+echo "✅ push complete — $MSG"         | tee -a "$TMP_LOG"
+echo "==== $(date '+%F %T') END ===="  | tee -a "$TMP_LOG"
+
+##############################################################################
+# 6. prepend-лог + обрезаем до 10 блоков
+goto_log() {
+  { cat "$TMP_LOG"; [[ -f $LOG ]] && cat "$LOG"; } > "${LOG}.new"
+  # оставляем 10 последних блоков «==== … START ====»
+  awk '/==== .* START ====/ {cnt++} cnt<=10' "${LOG}.new" > "$LOG"
+  rm -f "$TMP_LOG" "${LOG}.new"
+}
