@@ -62,7 +62,8 @@ need_push=false
 changed_files=()
 
 for f in "${FILES[@]}"; do
-  if ! git diff --quiet HEAD~1 -- "$f" 2>/dev/null; then
+  # Проверяем изменения относительно последнего коммита или индекса
+  if ! git diff --quiet HEAD -- "$f" 2>/dev/null || ! git diff --quiet --cached -- "$f" 2>/dev/null; then
     need_push=true
     changed_files+=("$f")
     log "Обнаружены изменения в: $f"
@@ -81,8 +82,8 @@ fi
 MSG="update configuration"
 
 if [[ " ${changed_files[@]} " =~ " Default.yaml " ]]; then
-  # Ищем изменения в Default.yaml
-  diff_output=$(git diff HEAD~1 -- Default.yaml 2>/dev/null || echo "")
+  # Ищем изменения в Default.yaml (рабочая копия vs HEAD)
+  diff_output=$(git diff HEAD -- Default.yaml 2>/dev/null || git diff --cached -- Default.yaml 2>/dev/null || echo "")
   
   if [[ -n "$diff_output" ]]; then
     # Ищем добавленные сервисы
