@@ -1,21 +1,106 @@
-proxies:
-  - name: LV 2
-    type: socks5
-    server: 87.99.68.28
-    port: 30230
-    username: p30230
-    password: Kejs777
+subscribe-url: http://your-service-provider
+proxy-providers:
+  服务提供商-1:
+    url: http://your-service-provider
+    interval: 600
+  # 服务提供商-2:
+  #   url: http://your-another-service-provider
+  #   interval: 600
 proxy-groups:
-  - name: Main
+  # 功能分组
+  - name: 选择代理
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Proxy.png
+    type: select
+    proxies: &proxies
+      - 自动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+  - name: Netflix
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Netflix.png
+    type: select
+    proxies: *proxies
+  - name: Disney+
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Disney%2B.png
+    type: select
+    proxies: *proxies
+  - name: Spotify
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Spotify.png
+    type: select
+    proxies: *proxies
+  - name: YouTube
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/YouTube.png
+    type: select
+    proxies: *proxies
+  - name: Speedtest
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Speedtest.png
+    type: select
+    proxies: *proxies
+  - name: 默认
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Final.png
     type: select
     proxies:
+      - 选择代理
       - DIRECT
-      - LV 2
-  - name: Default
-    type: select
-    proxies:
-      - DIRECT
+  # 基于地区分组
+  - name: HK 香港
+    filter: "港|🇭🇰|HK|(?i)Hong"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Hong_Kong.png
+    interval: 120
+    lazy: true
+    tolerance: 50
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    include-all: true
+  - name: TW 台湾
+    filter: "台|🇨🇳|🇹🇼|湾|TW|(?i)Taiwan"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Taiwan.png
+    interval: 120
+    lazy: true
+    tolerance: 50
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    include-all: true
+  - name: SG 新加坡
+    filter: "新加坡|坡|狮城|🇸🇬|SG|(?i)Singapore"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Singapore.png
+    interval: 120
+    lazy: true
+    tolerance: 50
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    include-all: true
+  - name: JP 日本
+    filter: "日|🇯🇵|东京|JP|(?i)Japan"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Japan.png
+    interval: 120
+    lazy: true
+    tolerance: 50
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    include-all: true
+  - name: US 美国
+    filter: "美|🇺🇲|US|(?i)States|American"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/United_States.png
+    interval: 120
+    lazy: true
+    tolerance: 50
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    include-all: true
+  - name: 自动选择
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Proxy.png
+    interval: 120
+    lazy: true
+    tolerance: 50
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    include-all: true
 rules:
+  - PROCESS-PATH,test2,LV 2,no-track
   - DOMAIN-KEYWORD,test,LV 2,no-track
   - PROCESS-NAME,AdsPower Global,LV 2,no-track
   - DOMAIN-KEYWORD,monolead,LV 2,no-track
@@ -74,10 +159,11 @@ rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
   - MATCH,Default
+script:
+  shortcuts:
+    quic: network == 'udp' and dst_port == 443
 dns:
   default-nameserver:
-    - 1.1.1.1
-    - 8.8.8.8
     - 114.114.115.115
     - 119.28.28.28
     - 223.6.6.6
@@ -87,6 +173,69 @@ dns:
     - https://doh.pub/dns-query
 log-level: info
 mode: rule
-script:
-  shortcuts:
-    quic: network == 'udp' and dst_port == 443
+rule-providers:
+  netflix:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/netflix.yaml
+  disney:
+    behavior: domain
+    interval: 86400
+    type: http
+    url: https://rules.kr328.app/disney.yaml
+  spotify:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/spotify.yaml
+  speedtest:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/speedtest.yaml
+  github:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/github.yaml
+  telegram:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/telegram.yaml
+  youtube:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/youtube.yaml
+  google:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/google.yaml
+  twitter:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/twitter.yaml
+  instagram:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/instagram.yaml
+  facebook:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/facebook.yaml
+  steam:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/steam.yaml
+  steam@cn:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/steam@cn.yaml
+  microsoft:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/microsoft.yaml
+  microsoft@cn:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/microsoft@cn.yaml
+  xbox:
+    behavior: domain
+    interval: 86400
+    url: https://rules.kr328.app/xbox.yaml
