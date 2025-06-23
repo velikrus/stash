@@ -5,6 +5,7 @@
 #  • отслеживаются только: auto_commit.sh, update_from_github.sh, Default.yaml
 #  • commit-msg: «add monolead» / «remove AdsPower Global»
 ###############################################################################
+
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -29,64 +30,114 @@ log() { echo "$@" | tee -a "$TMP_LOG"; }
 log "==== $(date '+%F %T') START ===="
 
 ##############################################################################
-# 0. убираем auto_commit.log из индекса
+# 0. убираем auto_commit.log из индекса (если был добавлен)
 git rm --cached --ignore-unmatch "$LOG" 2>/dev/null || true
 
 ##############################################################################
-# 1. есть ли изменения в whitelisted-файлах?
+# 1. синхронизируемся с удаленным репозиторием
+log "Получение последних изменений из GitHub..."
 git fetch origin main
+
+##############################################################################
+# 2. проверяем локальные незакоммиченные изменения и коммитим их
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  log "Обнаружены локальные изменения, создаем промежуточный коммит..."
+  git add -A
+  git commit -m "🛠 локальный автокоммит перед синхронизацией" | tee -a "$TMP_LOG"
+fi
+
+##############################################################################
+# 3. делаем pull с merge (избегаем конфликтов)
+log "Синхронизация с удаленным репозиторием..."
+if ! git pull origin main --no-edit 2>&1 | tee -a "$TMP_LOG"; then
+  log "❌ Ошибка при pull - возможны конфликты"
+  log "==== $(date '+%F %T') ERROR END ===="
+  goto_log
+  exit 1
+fi
+
+##############################################################################
+# 4. проверяем есть ли изменения в отслеживаемых файлах после синхронизации
 need_push=false
+changed_files=()
+
 for f in "${FILES[@]}"; do
-  if ! git diff --quiet origin/main -- "$f"; then
-    need_push=true; break
+  if ! git diff --quiet HEAD~1 -- "$f" 2>/dev/null; then
+    need_push=true
+    changed_files+=("$f")
+    log "Обнаружены изменения в: $f"
   fi
 done
 
 if [ "$need_push" = false ]; then
-  log "нет изменений — выход"
+  log "Нет изменений в отслеживаемых файлах — выход"
+  log "==== $(date '+%F %T') END ===="
   goto_log
   exit 0
 fi
 
 ##############################################################################
-# 2. локальные незакоммиченные правки
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  git add -A
-  git commit -m "🛠 локальный автокоммит" | tee -a "$TMP_LOG"
-fi
+# 5. определяем commit-msg на основе изменений в Default.yaml
+MSG="update configuration"
 
-##############################################################################
-# 3. pull без rebase
-git pull origin main --no-edit | tee -a "$TMP_LOG"
-
-##############################################################################
-# 4. определяем commit-msg
-diff_line=$(git diff origin/main -- Default.yaml | grep -E '^[-+]\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1)
-
-if [[ $diff_line == +* ]]; then
-  action="add"
-  service=$(echo "$diff_line" | cut -d',' -f2)
-elif [[ $diff_line == -* ]]; then
-  action="remove"
-  service=$(echo "$diff_line" | cut -d',' -f2)
+if [[ " ${changed_files[@]} " =~ " Default.yaml " ]]; then
+  # Ищем изменения в Default.yaml
+  diff_output=$(git diff HEAD~1 -- Default.yaml 2>/dev/null || echo "")
+  
+  if [[ -n "$diff_output" ]]; then
+    # Ищем добавленные сервисы
+    added_line=$(echo "$diff_output" | grep -E '^\+\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1 | sed 's/^\+//')
+    # Ищем удаленные сервисы  
+    removed_line=$(echo "$diff_output" | grep -E '^\-\s*(DOMAIN-KEYWORD|PROCESS-NAME)' | head -n1 | sed 's/^\-//')
+    
+    if [[ -n "$added_line" ]]; then
+      service=$(echo "$added_line" | cut -d',' -f2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+      MSG="add $service"
+      log "Обнаружено добавление сервиса: $service"
+    elif [[ -n "$removed_line" ]]; then
+      service=$(echo "$removed_line" | cut -d',' -f2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+      MSG="remove $service"
+      log "Обнаружено удаление сервиса: $service"
+    else
+      MSG="update Default.yaml"
+      log "Обнаружены другие изменения в Default.yaml"
+    fi
+  fi
 else
-  action="update"
-  service="Default.yaml"
+  # Если изменения только в скриптах
+  MSG="update scripts"
+  log "Изменения только в скриптах"
 fi
 
-MSG="$action $(echo "$service" | sed 's/^[[:space:]]*//')"
-
 ##############################################################################
-# 5. коммит + пуш
+# 6. создаем финальный коммит и пушим (если есть что коммитить)
 git add "${FILES[@]}"
+
 if git diff --cached --quiet; then
-  log "skip commit (diff пуст)"
+  log "Нет изменений для коммита после добавления файлов"
 else
-  git commit -m "$MSG" | tee -a "$TMP_LOG"
+  log "Создание коммита: $MSG"
+  if git commit -m "$MSG" 2>&1 | tee -a "$TMP_LOG"; then
+    log "✅ Коммит создан успешно"
+  else
+    log "❌ Ошибка при создании коммита"
+    log "==== $(date '+%F %T') ERROR END ===="
+    goto_log
+    exit 1
+  fi
 fi
-git push origin main | tee -a "$TMP_LOG"
 
-log "✅ push complete — $MSG"
+##############################################################################
+# 7. пушим изменения
+log "Отправка изменений в GitHub..."
+if git push origin main 2>&1 | tee -a "$TMP_LOG"; then
+  log "✅ Push выполнен успешно — $MSG"
+else
+  log "❌ Ошибка при push"
+  log "==== $(date '+%F %T') ERROR END ===="
+  goto_log
+  exit 1
+fi
+
 log "==== $(date '+%F %T') END ===="
-
 goto_log
