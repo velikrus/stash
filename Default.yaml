@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - DOMAIN-KEYWORD,cloudflare4,LV 2,no-track
   - DOMAIN-KEYWORD,cloudflare3,LV 2,no-track
   - DOMAIN-KEYWORD,cloudflare2,LV 2,no-track
   - DOMAIN-KEYWORD,cloudflare,LV 2,no-track
