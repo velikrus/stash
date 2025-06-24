@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - PROCESS-PATH,Sunbrowser Global Helper,LV 2,no-track
   - DOMAIN-KEYWORD,cloudflare,LV 2,no-track
   - DOMAIN-KEYWORD,adspower,LV 2,no-track
   - DOMAIN-KEYWORD,google,LV 2,no-track
