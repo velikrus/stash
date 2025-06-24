@@ -3,5 +3,6 @@ ca-passphrase: 9YNW9THQ
 mitm:
 - com.kaspersky.kav
 - api.incolumitas.com
+- 87.99.68.28
 rewrite: []
 force-http-engine: []
