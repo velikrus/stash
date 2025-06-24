@@ -16,6 +16,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - DOMAIN-KEYWORD,dolphin,LV 2,no-track
   - PROCESS-NAME,Dolphin Anty Helper,LV 2,no-track
   - DOMAIN-KEYWORD,replicate,LV 2,no-track
   - PROCESS-NAME,SunBrowser Helper,LV 2,no-track
