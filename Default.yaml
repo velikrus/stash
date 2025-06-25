@@ -114,8 +114,3 @@ dns:
 
 log-level: info
 mode: rule
-
-  bypass:
-    - process-name: com.kaspersky.kav
-    - process-name: kavd
-    - process-name: kaspersky
