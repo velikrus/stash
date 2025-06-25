@@ -18,9 +18,10 @@ proxy-groups:
       - DIRECT
       - LV 2
   - name: Default
-    type: select
+    type: fallback
     proxies:
       - DIRECT
+      - LV 2
 rules:
   - PROCESS-NAME,Telegram,LV 2,no-track
   - DOMAIN-KEYWORD,rusich-nsk.ru,LV 2,no-track
