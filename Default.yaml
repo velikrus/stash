@@ -3,7 +3,6 @@ allow-lan: true
 bind-address: '*'
 ipv6: false
 resolve-hostnames: true
-
 proxies:
   - name: LV 2
     type: socks5
@@ -23,7 +22,13 @@ proxy-groups:
       - DIRECT
       - LV 2
 rules:
+  - DOMAIN-KEYWORD,browser,LV 2,no-track
+  - IP-CIDR,5.28.195.1/32,LV 2,no-track
   - PROCESS-NAME,Telegram,LV 2,no-track
+  - PROCESS-NAME,com.kaspersky.kav,DIRECT,no-track
+  - PROCESS-NAME,kaspersky,DIRECT,no-track
+  - PROCESS-NAME,kavd,DIRECT,no-track
+  - DOMAIN-KEYWORD,kaspersky,DIRECT,no-track
   - DOMAIN-KEYWORD,rusich-nsk.ru,LV 2,no-track
   - DOMAIN-KEYWORD,hydraproxy,LV 2,no-track
   - DOMAIN-KEYWORD,sav,LV 2,no-track
@@ -34,8 +39,8 @@ rules:
   - PROCESS-NAME,SunBrowser Helper,LV 2,no-track
   - DOMAIN-KEYWORD,cloudflare,LV 2,no-track
   - DOMAIN-KEYWORD,adspower,LV 2,no-track
-  - DOMAIN-KEYWORD,google,LV 2,no-track
   - PROCESS-NAME,AdsPower Global,LV 2,no-track
+  - DOMAIN-KEYWORD,google,LV 2,no-track
   - DOMAIN-KEYWORD,monolead,LV 2,no-track
   - DOMAIN-KEYWORD,cpatoday,LV 2,no-track
   - DOMAIN-KEYWORD,betterdisplay,LV 2,no-track
@@ -47,7 +52,6 @@ rules:
   - PROCESS-NAME,ig.com,LV 2,no-track
   - DOMAIN-KEYWORD,canva,LV 2,no-track
   - DOMAIN-KEYWORD,git,LV 2,no-track
-  - DOMAIN-KEYWORD,whoer.net,LV 2,no-track
   - DOMAIN-KEYWORD,fb.com,LV 2,no-track
   - DOMAIN-KEYWORD,facebook,LV 2,no-track
   - DOMAIN-KEYWORD,instagram,LV 2,no-track
@@ -64,16 +68,12 @@ rules:
   - PROCESS-NAME,Pachca,DIRECT,no-track
   - PROCESS-NAME,Pachca Helper,DIRECT,no-track
   - PROCESS-NAME,ChatGPTHelper,LV 2,no-track
-  - PROCESS-NAME,com.kaspersky.kav,DIRECT,no-track
   - PROCESS-NAME,Asana Helper,LV 2,no-track
   - PROCESS-NAME,PuntoSwitcher,DIRECT,no-track
-  - PROCESS-NAME,kaspersky,DIRECT,no-track
   - DOMAIN-KEYWORD,browserleaks,LV 2,no-track
   - DOMAIN-KEYWORD,icloud.com,DIRECT,no-track
   - DOMAIN-KEYWORD,apple.com,DIRECT,no-track
   - DOMAIN-KEYWORD,1password,DIRECT,no-track
-  - PROCESS-NAME,kavd,DIRECT,no-track
-  - DOMAIN-KEYWORD,kaspersky,DIRECT,no-track
   - DOMAIN-KEYWORD,youtube,LV 2,no-track
   - DOMAIN-KEYWORD,proton,LV 2,no-track
   - DOMAIN-KEYWORD,confluence,LV 2,no-track
@@ -96,13 +96,11 @@ dns:
   default-nameserver:
     - 1.1.1.1
     - 8.8.8.8
-    - 114.114.115.115
-    - 119.28.28.28
-    - 223.6.6.6
-    - system
   nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
+    - https://dns.google/dns-query
+    - https://cloudflare-dns.com/dns-query
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
 log-level: info
 mode: rule
 script:
