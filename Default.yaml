@@ -1,3 +1,11 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+ipv6: false
+resolve-hostnames: true  # ✅ ДОБАВЬ ЭТУ СТРОКУ
+
 proxies:
   - name: LV 2
     type: socks5
