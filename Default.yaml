@@ -113,6 +113,8 @@ mode: rule
 script:
   shortcuts:
     quic: network == 'udp' and dst_port == 443
+    rules:
+  - RULE-SCRIPT,quic,DIRECT
   bypass:
     - process-name: com.kaspersky.kav
     - process-name: kavd
