@@ -104,7 +104,6 @@ dns:
     - https://dns.google/dns-query
     - https://cloudflare-dns.com/dns-query
   enhanced-mode: redir-host
-  fake-ip-range: 198.18.0.1/16
 log-level: info
 mode: rule
 script:
