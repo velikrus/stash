@@ -4,5 +4,7 @@ mitm:
 - com.kaspersky.kav
 - api.incolumitas.com
 - 87.99.68.28
+- 149.154.167.41
+- 149.154.167.35
 rewrite: []
 force-http-engine: []
