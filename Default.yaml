@@ -27,31 +27,74 @@ proxy-groups:
 rules:
   - DOMAIN-KEYWORD,t.me,LV 2,no-track
   - DOMAIN-KEYWORD,telegram,LV 2,no-track
-  - PROCESS-NAME,Telegram,LV 2,no-track
   - PROCESS-NAME,Anty Helper,LV 2,no-track
   - PROCESS-NAME,Dolphin Anty,LV 2,no-track
   - DOMAIN-KEYWORD,browser,LV 2,no-track
   - IP-CIDR,5.28.195.1/32,LV 2,no-track
-  - PROCESS-NAME,Dolphin Anty Helper,LV 2,no-track
-  - DOMAIN-KEYWORD,kaspersky,DIRECT,no-track
+  - PROCESS-NAME,Telegram,LV 2,no-track
   - PROCESS-NAME,com.kaspersky.kav,DIRECT,no-track
   - PROCESS-NAME,kaspersky,DIRECT,no-track
   - PROCESS-NAME,kavd,DIRECT,no-track
+  - DOMAIN-KEYWORD,kaspersky,DIRECT,no-track
+  - DOMAIN-KEYWORD,rusich-nsk.ru,LV 2,no-track
+  - DOMAIN-KEYWORD,hydraproxy,LV 2,no-track
+  - DOMAIN-KEYWORD,sav,LV 2,no-track
+  - DOMAIN-KEYWORD,anty,LV 2,no-track
+  - DOMAIN-KEYWORD,dolphin,LV 2,no-track
+  - PROCESS-NAME,Dolphin Anty Helper,LV 2,no-track
+  - DOMAIN-KEYWORD,replicate,LV 2,no-track
+  - PROCESS-NAME,SunBrowser Helper,LV 2,no-track
   - DOMAIN-KEYWORD,cloudflare,LV 2,no-track
   - DOMAIN-KEYWORD,adspower,LV 2,no-track
   - PROCESS-NAME,AdsPower Global,LV 2,no-track
   - DOMAIN-KEYWORD,google,LV 2,no-track
-  - DOMAIN-KEYWORD,x10,LV 2,no-track
+  - DOMAIN-KEYWORD,monolead,LV 2,no-track
+  - DOMAIN-KEYWORD,cpatoday,LV 2,no-track
+  - DOMAIN-KEYWORD,betterdisplay,LV 2,no-track
+  - DOMAIN-KEYWORD,nektony,LV 2,no-track
+  - DOMAIN-KEYWORD,ytimg,LV 2,no-track
+  - DOMAIN-KEYWORD,ggpht,LV 2,no-track
+  - DOMAIN-KEYWORD,googlevideo,LV 2,no-track
+  - DOMAIN-KEYWORD,binance,LV 2,no-track
+  - DOMAIN-KEYWORD,canva,LV 2,no-track
+  - DOMAIN-KEYWORD,git,LV 2,no-track
+  - DOMAIN-KEYWORD,fb.com,LV 2,no-track
   - DOMAIN-KEYWORD,facebook,LV 2,no-track
   - DOMAIN-KEYWORD,instagram,LV 2,no-track
+  - DOMAIN-KEYWORD,stripe,LV 2,no-track
   - DOMAIN-KEYWORD,smshub,LV 2,no-track
+  - DOMAIN-KEYWORD,x10,LV 2,no-track
+  - PROCESS-NAME,AdsPower Global Helper,LV 2,no-track
+  - PROCESS-NAME,AdsPowerToolMerge,LV 2,no-track
+  - DOMAIN-KEYWORD,devmate.com,LV 2,no-track
+  - PROCESS-NAME,tor,LV 2,no-track
+  - PROCESS-NAME,Notion Helper,LV 2,no-track
   - DOMAIN-KEYWORD,notion,LV 2,no-track
-  - DOMAIN-KEYWORD,openai,LV 2,no-track
-  - DOMAIN-KEYWORD,proton,LV 2,no-track
-  - DOMAIN-KEYWORD,youtube,LV 2,no-track
+  - PROCESS-NAME,Notion,LV 2,no-track
+  - PROCESS-NAME,Pachca,DIRECT,no-track
+  - PROCESS-NAME,Pachca Helper,DIRECT,no-track
+  - PROCESS-NAME,ChatGPTHelper,LV 2,no-track
+  - PROCESS-NAME,Asana Helper,LV 2,no-track
+  - PROCESS-NAME,PuntoSwitcher,DIRECT,no-track
+  - DOMAIN-KEYWORD,browserleaks,LV 2,no-track
   - DOMAIN-KEYWORD,icloud.com,DIRECT,no-track
   - DOMAIN-KEYWORD,apple.com,DIRECT,no-track
   - DOMAIN-KEYWORD,1password,DIRECT,no-track
+  - DOMAIN-KEYWORD,youtube,LV 2,no-track
+  - DOMAIN-KEYWORD,proton,LV 2,no-track
+  - DOMAIN-KEYWORD,confluence,LV 2,no-track
+  - DOMAIN-KEYWORD,jira,LV 2,no-track
+  - DOMAIN-KEYWORD,atlassian,LV 2,no-track
+  - DOMAIN-KEYWORD,airtable,LV 2,no-track
+  - PROCESS-NAME,asana,LV 2,no-track
+  - DOMAIN-KEYWORD,asana,LV 2,no-track
+  - PROCESS-NAME,chatgpt,LV 2,no-track
+  - DOMAIN-KEYWORD,chatgpt,LV 2,no-track
+  - DOMAIN-KEYWORD,whoer.net,LV 2,no-track
+  - DOMAIN-KEYWORD,sentry.io,LV 2,no-track
+  - DOMAIN-KEYWORD,openai,LV 2,no-track
+  - DOMAIN-KEYWORD,2ip,LV 2,no-track
+  - DOMAIN-KEYWORD,deepl,LV 2,no-track
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
   - MATCH,Default
