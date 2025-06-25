@@ -22,6 +22,7 @@ proxy-groups:
       - DIRECT
       - LV 2
 rules:
+  - PROCESS-NAME,Dolphin Anty,LV 2
   - DOMAIN-KEYWORD,browser,LV 2,no-track
   - IP-CIDR,5.28.195.1/32,LV 2,no-track
   - PROCESS-NAME,Telegram,LV 2,no-track
