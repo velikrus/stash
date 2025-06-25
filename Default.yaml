@@ -23,8 +23,13 @@ proxy-groups:
     proxies:
       - DIRECT
       - LV 2
+      
+script:
+  shortcuts:
+    quic: network == 'udp' and dst_port == 443      
 
 rules:
+  - RULE-SCRIPT,quic,DIRECT
   - DOMAIN-KEYWORD,t.me,LV 2
   - DOMAIN-KEYWORD,telegram,LV 2
   - PROCESS-NAME,Anty Helper,LV 2
@@ -110,12 +115,6 @@ dns:
 log-level: info
 mode: rule
 
-script:
-  shortcuts:
-    quic: network == 'udp' and dst_port == 443
-
-rules:
-  - RULE-SCRIPT,quic,DIRECT
   bypass:
     - process-name: com.kaspersky.kav
     - process-name: kavd
