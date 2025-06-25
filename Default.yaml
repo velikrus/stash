@@ -4,7 +4,7 @@ bind-address: '*'
 mode: rule
 log-level: info
 ipv6: false
-resolve-hostnames: true  # ✅ ДОБАВЬ ЭТУ СТРОКУ
+resolve-hostnames: true
 
 proxies:
   - name: LV 2
