@@ -22,6 +22,7 @@ proxy-groups:
       - DIRECT
       - LV 2
 rules:
+  - DOMAIN-KEYWORD,t.me,LV 2,no-track
   - DOMAIN-KEYWORD,telegram,LV 2,no-track
   - PROCESS-NAME,Anty Helper,LV 2,no-track
   - PROCESS-NAME,Dolphin Anty,LV 2,no-track
