@@ -22,6 +22,7 @@ proxy-groups:
     proxies:
       - DIRECT
 rules:
+  - PROCESS-NAME,Telegram,LV 2,no-track
   - DOMAIN-KEYWORD,rusich-nsk.ru,LV 2,no-track
   - DOMAIN-KEYWORD,hydraproxy,LV 2,no-track
   - DOMAIN-KEYWORD,sav,LV 2,no-track
