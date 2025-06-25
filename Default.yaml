@@ -105,7 +105,7 @@ dns:
   nameserver:
     - https://dns.google/dns-query
     - https://cloudflare-dns.com/dns-query
-  enhanced-mode: redir-host
+  enhanced-mode: fake-ip
 
 log-level: info
 mode: rule
