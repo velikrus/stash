@@ -3,7 +3,6 @@ allow-lan: true
 bind-address: '*'
 ipv6: false
 resolve-hostnames: true
-
 proxies:
   - name: LV 2
     type: socks5
@@ -11,7 +10,6 @@ proxies:
     port: 30230
     username: p30230
     password: Kejs777
-
 proxy-groups:
   - name: Main
     type: select
@@ -23,14 +21,12 @@ proxy-groups:
     proxies:
       - DIRECT
       - LV 2
-      
 script:
   shortcuts:
-    quic: network == 'udp' and dst_port == 443      
-
+    quic: network == 'udp' and dst_port == 443
 rules:
   - RULE-SCRIPT,quic,DIRECT
-  - DOMAIN-KEYWORD,t.me,LV 2
+  - DOMAIN-KEYWORD,t.me,DIRECT
   - DOMAIN-KEYWORD,telegram,LV 2
   - PROCESS-NAME,Anty Helper,LV 2
   - PROCESS-NAME,Dolphin Anty,LV 2
@@ -102,7 +98,6 @@ rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
   - MATCH,Default
-
 dns:
   default-nameserver:
     - 1.1.1.1
@@ -111,6 +106,5 @@ dns:
     - https://dns.google/dns-query
     - https://cloudflare-dns.com/dns-query
   enhanced-mode: redir-host
-
 log-level: info
 mode: rule
