@@ -27,7 +27,7 @@ script:
 rules:
   - RULE-SCRIPT,quic,DIRECT
   - DOMAIN-KEYWORD,t.me,DIRECT
-  - DOMAIN-KEYWORD,telegram,LV 2
+  - DOMAIN-KEYWORD,telegram,DIRECT
   - PROCESS-NAME,Anty Helper,LV 2
   - PROCESS-NAME,Dolphin Anty,LV 2
   - DOMAIN-KEYWORD,browser,LV 2
