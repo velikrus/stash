@@ -31,7 +31,7 @@ rules:
   - PROCESS-NAME,Anty Helper,LV 2
   - PROCESS-NAME,Dolphin Anty,LV 2
   - DOMAIN-KEYWORD,browser,LV 2
-  - PROCESS-NAME,Telegram,LV 2
+  - PROCESS-NAME,Telegram,DIRECT
   - PROCESS-NAME,com.kaspersky.kav,DIRECT
   - PROCESS-NAME,kaspersky,DIRECT
   - PROCESS-NAME,kavd,DIRECT
